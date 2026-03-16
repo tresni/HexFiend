@@ -2005,9 +2005,7 @@ cancelled:;
     }
 }
 
-- (IBAction)setMaximumColumnsFromMenuItem:(id)sender {
-    NSMenuItem *item = (NSMenuItem *)sender;
-    NSInteger value = item.tag;
+- (void)applyMaximumColumnsValue:(NSInteger)value {
     if (value < 0) {
         NSBeep();
         return;
@@ -2020,6 +2018,26 @@ cancelled:;
     } else {
         [self updateHorizontalScrollContentSize];
     }
+}
+
+- (IBAction)setMaximumColumnsFromMenuItem:(id)sender {
+    NSMenuItem *item = (NSMenuItem *)sender;
+    [self applyMaximumColumnsValue:item.tag];
+}
+
+- (IBAction)customMaximumColumns:(id __unused)sender {
+    NSString *valueString = HFPromptForValue(NSLocalizedString(@"Enter number of columns", ""));
+    if (!valueString) {
+        return;
+    }
+    NSInteger value = valueString.integerValue;
+    if (value < 0) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Value cannot be negative.", "");
+        [alert runModal];
+        return;
+    }
+    [self applyMaximumColumnsValue:value];
 }
 
 - (IBAction)setOverwriteMode:sender {

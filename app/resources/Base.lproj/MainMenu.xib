@@ -538,6 +538,13 @@
                                                 <action selector="setMaximumColumnsFromMenuItem:" target="-1" id="mJc-5s-6c0"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="0cC-qs-X1U"/>
+                                        <menuItem title="Custom…" id="YzL-1W-9xB">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="customMaximumColumns:" target="-1" id="y3f-sd-4Gv"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
