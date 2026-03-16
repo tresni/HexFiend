@@ -893,11 +893,16 @@ static inline Class preferredByteArrayClass(void) {
 
 - (void)_updateBytesPerLine {
     NSUInteger newBytesPerLine = NSUIntegerMax;
-    for(HFRepresenter* rep in representers) {
-        CGFloat width = [rep.view frame].size.width;
-        NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
-        HFASSERT(repMaxBytesPerLine > 0);
-        newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
+    if (maximumColumns > 0) {
+        NSUInteger effectiveBytesPerColumn = bytesPerColumn > 0 ? bytesPerColumn : 1;
+        newBytesPerLine = MAX(maximumColumns * effectiveBytesPerColumn, effectiveBytesPerColumn);
+    } else {
+        for(HFRepresenter* rep in representers) {
+            CGFloat width = [rep.view frame].size.width;
+            NSUInteger repMaxBytesPerLine = [rep maximumBytesPerLineForViewWidth:width];
+            HFASSERT(repMaxBytesPerLine > 0);
+            newBytesPerLine = MIN(repMaxBytesPerLine, newBytesPerLine);
+        }
     }
     if (newBytesPerLine != bytesPerLine) {
         HFASSERT(newBytesPerLine > 0);

@@ -599,6 +599,18 @@ static inline Class preferredByteArrayClass(void) {
     }
 }
 
+- (void)refreshLayoutForCurrentColumns {
+    if (!layoutRepresenter) {
+        return;
+    }
+    [layoutRepresenter performLayout];
+    [controller representer:layoutRepresenter changedProperties:HFControllerBytesPerLine];
+    [self updateHorizontalScrollViewIfNeeded];
+    if (controller.maximumColumns > 0) {
+        [self updateHorizontalScrollContentSize];
+    }
+}
+
 /* Shared point for setting up a window, optionally setting a bytes per line */
 - (void)setupWindowEnforcingBytesPerLine:(NSUInteger)bplOrZero {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -643,6 +655,7 @@ static inline Class preferredByteArrayClass(void) {
 - (void)windowControllerDidLoadNib:(NSWindowController *)windowController {
     [super windowControllerDidLoadNib:windowController];
     [self setupWindowEnforcingBytesPerLine:0];
+    [self refreshLayoutForCurrentColumns];
 }
 
 - (void)adoptWindowController:(NSWindowController *)windowController fromTransientDocument:(BaseDataDocument *)transientDocument {
@@ -667,6 +680,7 @@ static inline Class preferredByteArrayClass(void) {
 
     /* Set up the window */
     [self setupWindowEnforcingBytesPerLine:oldBPL];
+    [self refreshLayoutForCurrentColumns];
 }
 
 /* When our line counting view needs more space, we increase the size of our window, and also move it left by the same amount so that the other content does not appear to move. */
@@ -943,6 +957,7 @@ static inline Class preferredByteArrayClass(void) {
     if (byteArray) {
         [controller setByteArray:byteArray];
         cleanGenerationCount = [byteArray changeGenerationCount];
+        [self refreshLayoutForCurrentColumns];
         result = YES;
     }
     return result;
@@ -1447,6 +1462,7 @@ static inline Class preferredByteArrayClass(void) {
             }            
             [controller setByteArray:newByteArray];
             cleanGenerationCount = [newByteArray changeGenerationCount];
+            [self refreshLayoutForCurrentColumns];
         }
     }
     

@@ -1897,17 +1897,17 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
     CGFloat availableSpace = (CGFloat)(viewWidth - 2. * [self horizontalContainerInset]);
     NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn], bytesPerCharacter = [self bytesPerCharacter];
     NSUInteger maxColumns = self.representer.controller.maximumColumns;
+    if (maxColumns > 0) {
+        if (bytesPerColumn == 0) {
+            return MAX(maxColumns * bytesPerCharacter, bytesPerCharacter);
+        }
+        return MAX(maxColumns * bytesPerColumn, bytesPerColumn);
+    }
     if (bytesPerColumn == 0) {
         /* No columns */
         NSUInteger numChars = (NSUInteger)(availableSpace / [self advancePerCharacter]);
         /* Return it, except it's at least one character */
-        NSUInteger result = MAX(numChars, 1u) * bytesPerCharacter;
-        if (maxColumns > 0) {
-            NSUInteger maxBytes = maxColumns * bytesPerCharacter;
-            result = MIN(result, maxBytes);
-            result = MAX(result, bytesPerCharacter);
-        }
-        return result;
+        return MAX(numChars, 1u) * bytesPerCharacter;
     }
     else {
         /* We have some columns */
@@ -1915,9 +1915,6 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
         //spaceRequiredForNColumns = N * (advancePerColumn) - spaceBetweenColumns
         CGFloat fractionalColumns = (availableSpace + [self advanceBetweenColumns]) / advancePerColumn;
         NSUInteger columnCount = (NSUInteger)fmax(1., HFFloor(fractionalColumns));
-        if (maxColumns > 0) {
-            columnCount = MIN(columnCount, maxColumns);
-        }
         return columnCount * bytesPerColumn;
     }
 }
