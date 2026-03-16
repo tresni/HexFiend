@@ -27,6 +27,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     HFRepresenter *scrollRepresenter;
     HFRepresenter *textDividerRepresenter;
     HFLayoutRepresenter *layoutRepresenter;
+    NSScrollView *horizontalScrollView;
     DataInspectorRepresenter *dataInspectorRepresenter;
     HFStatusBarRepresenter *statusBarRepresenter;
     HFBinaryTemplateRepresenter *binaryTemplateRepresenter;

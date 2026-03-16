@@ -103,6 +103,9 @@ static NSInteger sortByLayoutPosition(id a, id b, void *self) {
     
     CGFloat remainingWidth = NSMaxX(layoutRect) - nextX;
     if (numHorizontallyResizable > 0 && remainingWidth > 0) {
+        if ([[self controller] maximumColumns] > 0) {
+            return;
+        }
         NSView *view = [self view];
         CGFloat remainingPixels = [view convertSize:NSMakeSize(remainingWidth, 0) toView:nil].width;
         HFASSERT(remainingPixels > 0);
