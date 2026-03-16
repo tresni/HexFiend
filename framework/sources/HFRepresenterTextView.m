@@ -924,13 +924,19 @@ enum LineCoverage_t {
 #endif
 
 - (NSUInteger)bytesPerLine {
-    HFASSERT([self representer] != nil);
-    return [[self representer] bytesPerLine];
+    HFTextRepresenter *rep = [self representer];
+    if (!rep) {
+        return 1;
+    }
+    return [rep bytesPerLine];
 }
 
 - (NSUInteger)bytesPerColumn {
-    HFASSERT([self representer] != nil);
-    return [[self representer] bytesPerColumn];
+    HFTextRepresenter *rep = [self representer];
+    if (!rep) {
+        return 1;
+    }
+    return [rep bytesPerColumn];
 }
 
 - (void)_drawDefaultLineBackgrounds:(CGRect)clip withLineHeight:(CGFloat)lineHeight maxLines:(NSUInteger)maxLines {
@@ -1889,12 +1895,19 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
 
 - (NSUInteger)maximumBytesPerLineForViewWidth:(CGFloat)viewWidth {
     CGFloat availableSpace = (CGFloat)(viewWidth - 2. * [self horizontalContainerInset]);
-    NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn], bytesPerCharacter = [self bytesPerCharacter];    
+    NSUInteger bytesPerColumn = [self _effectiveBytesPerColumn], bytesPerCharacter = [self bytesPerCharacter];
+    NSUInteger maxColumns = self.representer.controller.maximumColumns;
     if (bytesPerColumn == 0) {
         /* No columns */
         NSUInteger numChars = (NSUInteger)(availableSpace / [self advancePerCharacter]);
         /* Return it, except it's at least one character */
-        return MAX(numChars, 1u) * bytesPerCharacter;
+        NSUInteger result = MAX(numChars, 1u) * bytesPerCharacter;
+        if (maxColumns > 0) {
+            NSUInteger maxBytes = maxColumns * bytesPerCharacter;
+            result = MIN(result, maxBytes);
+            result = MAX(result, bytesPerCharacter);
+        }
+        return result;
     }
     else {
         /* We have some columns */
@@ -1902,6 +1915,9 @@ static size_t unionAndCleanLists(CGRect *rectList, __unsafe_unretained id *value
         //spaceRequiredForNColumns = N * (advancePerColumn) - spaceBetweenColumns
         CGFloat fractionalColumns = (availableSpace + [self advanceBetweenColumns]) / advancePerColumn;
         NSUInteger columnCount = (NSUInteger)fmax(1., HFFloor(fractionalColumns));
+        if (maxColumns > 0) {
+            columnCount = MIN(columnCount, maxColumns);
+        }
         return columnCount * bytesPerColumn;
     }
 }

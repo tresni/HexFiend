@@ -95,6 +95,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (IBAction)setReadOnlyMode:sender;
 - (IBAction)modifyByteGrouping:sender;
 - (IBAction)customByteGrouping:(id)sender;
+- (IBAction)setMaximumColumnsFromMenuItem:(id)sender;
 - (IBAction)setLineNumberFormat:(id)sender;
 - (IBAction)setByteThemeFromMenuItem:(NSMenuItem *)sender;
 

@@ -101,6 +101,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontName" : HFDEFAULT_FONT,
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn"  : @4,
+            @"MaximumColumns"  : @0,
             @"DefaultEditMode" : @(HFInsertMode),
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -146,6 +147,7 @@ static inline Class preferredByteArrayClass(void) {
             @"DefaultFontName" : HFDEFAULT_FONT,
             @"DefaultFontSize" : @(HFDEFAULT_FONTSIZE),
             @"BytesPerColumn" : @4,
+            @"MaximumColumns" : @0,
             @"LineNumberFormat" : @0,
             USERDEFS_KEY_FOR_REP(columnRepresenter) : @NO,
             USERDEFS_KEY_FOR_REP(lineCountingRepresenter) : @YES,
@@ -706,6 +708,7 @@ static inline Class preferredByteArrayClass(void) {
     [controller setShouldLiveReload:[defs boolForKey:@"LiveReload"]];
     [controller setUndoManager:[self undoManager]];
     [controller setBytesPerColumn:[defs integerForKey:@"BytesPerColumn"]];
+    [controller setMaximumColumns:[defs integerForKey:@"MaximumColumns"]];
     [controller setByteTheme:appDelegate.byteThemes[[defs stringForKey:@"ByteTheme"]]];
     controller.inactiveSelectionColorMatchesActive = [defs boolForKey:@"InactiveSelectionColorMatchesActive"];
     
@@ -1073,6 +1076,10 @@ static inline Class preferredByteArrayClass(void) {
     }
     else if (action == @selector(modifyByteGrouping:)) {
         [item setState:(NSUInteger)[item tag] == [controller bytesPerColumn]];
+        return YES;
+    }
+    else if (action == @selector(setMaximumColumnsFromMenuItem:)) {
+        item.state = (controller.maximumColumns == (NSUInteger)item.tag) ? NSControlStateValueOn : NSControlStateValueOff;
         return YES;
     }
     else if (action == @selector(setLineNumberFormat:)) {
@@ -1871,6 +1878,17 @@ cancelled:;
         [(AppDelegate *)NSApp.delegate buildByteGroupingMenu];
         break;
     }
+}
+
+- (IBAction)setMaximumColumnsFromMenuItem:(id)sender {
+    NSMenuItem *item = (NSMenuItem *)sender;
+    NSInteger value = item.tag;
+    if (value < 0) {
+        NSBeep();
+        return;
+    }
+    controller.maximumColumns = (NSUInteger)value;
+    [[NSUserDefaults standardUserDefaults] setInteger:value forKey:@"MaximumColumns"];
 }
 
 - (IBAction)setOverwriteMode:sender {
