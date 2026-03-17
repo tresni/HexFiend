@@ -531,6 +531,27 @@ static inline Class preferredByteArrayClass(void) {
     [window setFrame:windowFrame display:YES];
 }
 
+- (void)sizeWindowToFitFixedColumnsIfNeeded {
+    if (controller.maximumColumns == 0) {
+        return;
+    }
+    NSWindow *window = [self window];
+    if (!window || !layoutRepresenter) {
+        return;
+    }
+    NSView *layoutView = [layoutRepresenter view];
+    const NSUInteger maxColumns = controller.maximumColumns;
+    const NSUInteger cappedColumns = MIN(maxColumns, 32u);
+    const NSUInteger bytesPerColumn = MAX(1u, controller.bytesPerColumn);
+    const NSUInteger bytesPerLine = MAX(1u, cappedColumns * bytesPerColumn);
+    CGFloat minViewWidth = [layoutRepresenter minimumViewWidthForBytesPerLine:bytesPerLine];
+    CGFloat minWindowWidth = [layoutView convertSize:NSMakeSize(minViewWidth, 1) toView:nil].width;
+    NSRect windowFrame = window.frame;
+    windowFrame.size.width = minWindowWidth;
+    [window setFrame:windowFrame display:YES];
+    [self updateHorizontalScrollContentSize];
+}
+
 - (void)updateHorizontalScrollContentSize {
     if (!horizontalScrollView || !layoutRepresenter) {
         return;
@@ -641,6 +662,8 @@ static inline Class preferredByteArrayClass(void) {
             [self relayoutAndResizeWindowForBytesPerLine:bpl.integerValue];
         }
     }
+
+    [self sizeWindowToFitFixedColumnsIfNeeded];
 
     if ([ud objectForKey:@"WindowOrigin"] && [ud objectForKey:@"WindowHeight"]) {
         NSRect frame = [[self window] frame];
