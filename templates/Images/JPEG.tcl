@@ -28,14 +28,14 @@ proc marker_name {value} {
         0xCD { return "Differential sequential DCT" }
         0xCE { return "Differential progressive DCT" }
         0xCF { return "Differential lossless (sequential)" }
-        0xD0 { return "Restart with modulo 8 count "0"" }
-        0xD1 { return "Restart with modulo 8 count "1"" }
-        0xD2 { return "Restart with modulo 8 count "2"" }
-        0xD3 { return "Restart with modulo 8 count "3"" }
-        0xD4 { return "Restart with modulo 8 count "4"" }
-        0xD5 { return "Restart with modulo 8 count "5"" }
-        0xD6 { return "Restart with modulo 8 count "6"" }
-        0xD7 { return "Restart with modulo 8 count "7"" }
+        0xD0 { return {Restart with modulo 8 count "0"} }
+        0xD1 { return {Restart with modulo 8 count "1"} }
+        0xD2 { return {Restart with modulo 8 count "2"} }
+        0xD3 { return {Restart with modulo 8 count "3"} }
+        0xD4 { return {Restart with modulo 8 count "4"} }
+        0xD5 { return {Restart with modulo 8 count "5"} }
+        0xD6 { return {Restart with modulo 8 count "6"} }
+        0xD7 { return {Restart with modulo 8 count "7"} }
         0xD8 { return "Start of image" }
         0xD9 { return "End of image" }
         0xDA { return "Start of scan" }
@@ -69,7 +69,12 @@ proc find_next {} {
     set start [pos]
     while {![end]} {
         if { [uint8] != 255 } continue
-        if { [uint8] > 0 } break
+        set marker [uint8]
+        # 0xFF 0x00 is byte-stuffing inside entropy-coded data
+        if { $marker == 0 } continue
+        # 0xFFD0..0xFFD7 are restart markers embedded in scan data
+        if { $marker >= 0xD0 && $marker <= 0xD7 } continue
+        break
     }
     set result [expr [pos] - $start - 2]
     goto $start
