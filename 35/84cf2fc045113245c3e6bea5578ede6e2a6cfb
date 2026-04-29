@@ -1,0 +1,23 @@
+templates/Images/JPEG.tcl
+  8e7fff2374683dc5 31-38,72-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "3584cf2fc045113245c3e6bea5578ede6e2a6cfb",
+  "prompts": {
+    "8e7fff2374683dc5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b57547b7-3870-4e70-b966-9b6d545d13aa",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Brian Hartvigsen",
+      "messages": [],
+      "total_additions": 14,
+      "total_deletions": 9,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    }
+  }
+}
