@@ -78,6 +78,7 @@ proc find_next {} {
 
 proc marker_app0 {} {
     set len [uint16 "Length"]
+    set seg_end [expr [pos] + $len - 2]
     set identifier [cstr "utf8" "Identifier"]
     set thumb_size 0
     if {$identifier == "JFIF"} {
@@ -92,12 +93,25 @@ proc marker_app0 {} {
         if {$thumb_size > 0} {
             bytes $thumb_size "Thumbnail Data"
         }
+        # Apple iPhones append a 4-byte "AMPF" tag here to flag that the
+        # file contains Multi-Picture Format data later in the stream.
+        if {[expr $seg_end - [pos]] >= 4} {
+            set tag_pos [pos]
+            set tag [ascii 4]
+            goto $tag_pos
+            if {$tag == "AMPF"} {
+                ascii 4 "Apple MPF marker"
+            }
+        }
     } elseif {$identifier == "JFXX"} {
         set tt [uint8 "Thumbnail Type"]
         if {$len > 3} {
             set thumb_size [expr $len - 3]
             bytes $thumb_size "Thumbnail Data"
         }
+    }
+    if {[pos] < $seg_end} {
+        bytes [expr $seg_end - [pos]] "Extra"
     }
     sectionvalue [human_size $thumb_size]
 }
