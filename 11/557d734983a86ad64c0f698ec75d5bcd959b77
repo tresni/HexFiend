@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "11557d734983a86ad64c0f698ec75d5bcd959b77",
+  "prompts": {
+    "f05386ddd1df8689": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4490659e-cd06-4e42-b089-e9754844eb2a",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Brian Hartvigsen",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 309,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
