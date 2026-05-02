@@ -1,0 +1,23 @@
+app/HexFiend_2.xcodeproj/project.pbxproj
+  f05386ddd1df8689 1894
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "15c2f6099808f26d67f575eb0b9b002afa3902c0",
+  "prompts": {
+    "f05386ddd1df8689": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4490659e-cd06-4e42-b089-e9754844eb2a",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Brian Hartvigsen",
+      "messages": [],
+      "total_additions": 12,
+      "total_deletions": 5,
+      "accepted_lines": 1,
+      "overriden_lines": 1
+    }
+  }
+}
