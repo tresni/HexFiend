@@ -19,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
     IBOutlet NSMenuItem *extendForwardsItem, *extendBackwardsItem;
     IBOutlet NSMenuItem *fontMenuItem;
     IBOutlet NSMenuItem *fontListPlaceholderMenuItem;
-    IBOutlet NSMenuItem *processListMenuItem;
     IBOutlet NSMenu *bookmarksMenu;
     IBOutlet NSMenuItem *noBookmarksMenuItem;
     NSArray *bookmarksMenuItems;

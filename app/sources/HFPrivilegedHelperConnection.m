@@ -27,44 +27,6 @@
     return shared;
 }
 
-- (BOOL)readBytes:(void *)bytes range:(HFRange)range process:(pid_t)process error:(NSError **)error {
-    HFASSERT(range.length <= ULONG_MAX);
-    HFASSERT(bytes != NULL || range.length > 0);
-    if (! [self connectIfNecessary]) return NO;
-    void *resultData = NULL;
-    mach_msg_type_number_t resultCnt;
-    
-    mach_port_t childReceivePort = [childReceiveMachPort machPort];
-    
-    kern_return_t kr = _GratefulFatherReadProcess(childReceivePort, process, range.location, range.length, (unsigned char **)&resultData, &resultCnt);
-    if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "_GratefulFatherReadProcess failed with mach error: %s\n", (char*) mach_error_string(kr));
-        if (error) *error = nil;
-        return NO;
-    }
-    if(bytes) memcpy(bytes, resultData, (size_t)range.length);
-    kr = vm_deallocate(mach_task_self(), (vm_address_t)resultData, resultCnt);
-    if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "failed to vm_deallocate(%p) for pid %d\nmach error: %s\n", resultData, process, (char*) mach_error_string(kr));
-    }
-    return YES;
-}
-
-- (BOOL)getAttributes:(VMRegionAttributes *)outAttributes length:(unsigned long long *)outLength offset:(unsigned long long)offset process:(pid_t)process error:(NSError **)error {
-    if (! [self connectIfNecessary]) return NO;
-    VMRegionAttributes atts = 0;
-    mach_vm_size_t length = 0;
-    kern_return_t kr = _GratefulFatherAttributesForAddress([childReceiveMachPort machPort], process, offset, &atts, &length);
-    if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "_GratefulFatherAttributesForAddress failed with mach error: %s\n", (char*) mach_error_string(kr));
-        if (error) *error = nil;
-        return NO;
-    }
-    if (outAttributes) *outAttributes = atts;
-    if (outLength) *outLength = length;
-    return YES;
-}
-
 - (BOOL)openFileAtPath:(const char *)path writable:(BOOL)writable fileDescriptor:(int *)outFD error:(NSError **)error
 {
     if (! [self connectIfNecessary]) return NO;
@@ -92,19 +54,6 @@
 
 	mach_port_deallocate(mach_task_self(), fd_port);
 
-    return YES;    
-}
-
-- (BOOL)getInfo:(struct HFProcessInfo_t *)outInfo forProcess:(pid_t)process {
-    HFASSERT(outInfo != NULL);
-    if (![self connectIfNecessary]) return NO;
-    uint8_t bitSize = 0;
-    kern_return_t kr = _GratefulFatherProcessInfo([childReceiveMachPort machPort], process, &bitSize);
-    if (kr != KERN_SUCCESS) {
-        fprintf(stdout, "_GratefulFatherProcessInfo failed with mach error: %s\n", (char*) mach_error_string(kr));
-        return NO;
-    }
-    outInfo->bits = bitSize;
     return YES;
 }
 
